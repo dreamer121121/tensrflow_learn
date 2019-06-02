@@ -13,35 +13,40 @@ ys = np.sin(xs)+np.random.uniform(-0.5,0.5,n_observation)
 X = tf.placeholder(tf.float32,name="X")
 Y = tf.placeholder(tf.float32,name="Y")
 
+
 #初始化权重参数
-W = tf.Variable(tf.random_normal([1]),name='weight')
+W = tf.Variable(tf.random_normal([1]),name='weight') #默认均值为0标准差为1的正态分布
 W_1 = tf.Variable(tf.random_normal([1]),name='weight1')
 W_2 = tf.Variable(tf.random_normal([1]),name="weight2")
 b = tf.Variable(tf.random_normal([1]),name='bias')
 
-#计算预测结果
+#计算预测结果：前项传递的过程
 Y_pred = tf.add(tf.multiply(X,W),b)
 Y_pred = tf.add(tf.multiply(tf.pow(X,2),W_1),Y_pred)
 Y_pred = tf.add(tf.multiply(tf.pow(X,3),W_2),Y_pred)
 
 #指定损失函数
-loss = tf.square(Y-Y_pred,name='loss')
+# loss = tf.square(Y-Y_pred,name='loss')
 samples_num = xs.shape[0]
-# loss = tf.reduce_sum(tf.pow(Y_pred-Y,2))/samples_num #为何要用这个损失函数？用原来的行不行？
+loss = tf.reduce_sum(tf.pow(Y_pred-Y,2))/samples_num #为何要用这个损失函数？用原来的行不行？
 
 
-#初始化optimizer(优化器)
+#初始化optimizer(优化器)：自动进行误差反向传播的过程，调整权值和阈值
 learning_rate = 0.01
 optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 
 #指定迭代的次数，并在session里执行graph
 n_samples = xs.shape[0]
-init = tf.global_variables_initializer()
+init = tf.global_variables_initializer() #初始化变量且是全部变量初始化。
+
+
+#准备工作结束，下面开始创建会话训练模型。
 with tf.Session() as sess:
     sess.run(init)
     writer = tf.summary.FileWriter('./graph/linear_reg',sess.graph)
+    iteras = 1000
     #训练模型
-    for i in range(1000):
+    for i in range(iteras):
         total_loss = 0
         for x,y in zip(xs,ys):
             _,l = sess.run([optimizer,loss],feed_dict={X:x,Y:y}) #两个op一起跑
