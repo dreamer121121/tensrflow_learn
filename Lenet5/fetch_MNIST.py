@@ -52,17 +52,18 @@ import matplotlib.pyplot as plt
 
 #data_path = '/Users/didi/Desktop/python_workspace/Neural Network/data/'
 # 训练集文件
-train_images_idx3_ubyte_file = './data/train-images-idx3-ubyte'
+train_images_idx3_ubyte_file = './MNIST_data/train-images-idx3-ubyte'
 # 训练集标签文件
-train_labels_idx1_ubyte_file = './data/train-labels-idx1-ubyte'
+train_labels_idx1_ubyte_file = './MNIST_data/train-labels-idx1-ubyte'
 
 # 测试集文件
-test_images_idx3_ubyte_file = './data/t10k-images-idx3-ubyte'
+test_images_idx3_ubyte_file = './MNIST_data/t10k-images-idx3-ubyte'
 # 测试集标签文件
-test_labels_idx1_ubyte_file = './data/t10k-labels-idx1-ubyte'
+test_labels_idx1_ubyte_file = './MNIST_data/t10k-labels-idx1-ubyte'
 
 
 def decode_idx3_ubyte(idx3_ubyte_file):
+    print("---训练数据---")
     """
     解析idx3文件的通用函数
     :param idx3_ubyte_file: idx3文件路径
@@ -91,11 +92,13 @@ def decode_idx3_ubyte(idx3_ubyte_file):
 
 
 def decode_idx1_ubyte(idx1_ubyte_file):
+
     """
     解析idx1文件的通用函数
     :param idx1_ubyte_file: idx1文件路径
     :return: 数据集
     """
+    print("--训练数据标签--")
     # 读取二进制数据
     bin_data = open(idx1_ubyte_file, 'rb').read()
 

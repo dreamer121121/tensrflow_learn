@@ -65,6 +65,7 @@ class LeNet(object):
         :param deriv:
         :return:
         """
+        print("--input_map.shape--",input_map.shape)
         N, C, W, H = input_map.shape
         K_NUM, K_C, K_W, K_H = kernal.shape
         if deriv == False:
@@ -146,10 +147,10 @@ def xavier_init(c1, c2, w=1, h=1, fc=False):
     """
     权值初始化函数
     类似于tf.truncated_normal()的作用
-    :param c1:
-    :param c2:
-    :param w:
-    :param h:
+    :param c1:卷积核数量
+    :param c2:卷积核通道数
+    :param w:卷积核宽度
+    :param h:卷积核高度
     :param fc:
     :return:
     """
@@ -159,6 +160,7 @@ def xavier_init(c1, c2, w=1, h=1, fc=False):
     params = ratio * (2*np.random.random((c1, c2, w, h)) - 1) #产生初始的权重。
     if fc == True:
         params = params.reshape(c1, c2)
+    print("---weight.shape---",params.shape)
     return params
 
 def convertToOneHot(labels):
@@ -167,12 +169,14 @@ def convertToOneHot(labels):
     return oneHotLabels
 
 def shuffle_dataset(data, label):
+
     N = data.shape[0]
     index = np.random.permutation(N)
     x = data[index, :, :]; y = label[index, :]
     return x, y
 
 if __name__ == '__main__':
+
     train_imgs = fetch_MNIST.load_train_images()
     train_labs = fetch_MNIST.load_train_labels().astype(int)
     # size of data;                  batch size
@@ -181,15 +185,21 @@ if __name__ == '__main__':
     lr = 0.01;     max_iter = 50000; iter_mod = int(data_size/batch_sz)
     train_labs = convertToOneHot(train_labs)
     my_CNN = LeNet(lr) #实例化构建网络
+
     for iters in range(max_iter):
         # starting index and ending index for input data
         st_idx = (iters % iter_mod) * batch_sz
         # shuffle the dataset
         if st_idx == 0:
             train_imgs, train_labs = shuffle_dataset(train_imgs, train_labs)
-        input_data = train_imgs[st_idx : st_idx + batch_sz]
-        output_label = train_labs[st_idx : st_idx + batch_sz]
+
+        # 准备每一次喂给网络的数据
+        input_data = train_imgs[st_idx : st_idx + batch_sz] #每一次input_data(64,28,28)
+        output_label = train_labs[st_idx : st_idx + batch_sz]#每一次outpur_label(64,10)
+
+        #进行前向传播，最终经softmax层输出
         softmax_output = my_CNN.forward_prop(input_data)
+
         if iters % 50 == 0:
             # calculate accuracy
             correct_list = [ int(np.argmax(softmax_output[i])==np.argmax(output_label[i])) for i in range(batch_sz) ]
@@ -200,4 +210,5 @@ if __name__ == '__main__':
             loss = -1.0 * np.sum(np.log(correct_prob))
             print ("The %d iters result:" % iters)
             print ("The accuracy is %f The loss is %f " % (accuracy, loss))
+
         my_CNN.backward_prop(softmax_output, output_label)
