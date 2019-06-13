@@ -65,16 +65,15 @@ class LeNet(object):
         :param deriv:
         :return:
         """
-        print("--input_map.shape--",input_map.shape)
         N, C, W, H = input_map.shape
         K_NUM, K_C, K_W, K_H = kernal.shape
         if deriv == False:
-            feature_map = np.zeros((N, K_NUM, W-K_W+1, H-K_H+1))
+            feature_map = np.zeros((N, K_NUM, W-K_W+1, H-K_H+1)) #第一层卷积出来的特征图的形状为(64,6,24,24)先将所有的像素值初始化为0
             for imgId in range(N):
                 for kId in range(K_NUM):
                     for cId in range(C):
                         feature_map[imgId][kId] += \
-                          convolve2d(input_map[imgId][cId], kernal[kId,cId,:,:], mode='valid')
+                          convolve2d(input_map[imgId][cId], kernal[kId,cId,:,:], mode='valid') #调用二维卷积库函数进行二维卷积，tf中也有类似的函数
             return feature_map
         else :
             # front->back (propagate loss)
@@ -105,8 +104,8 @@ class LeNet(object):
         N, C, W, H = input_map.shape
         P_W, P_H = tuple(pool)
         if deriv == False:
-            feature_map = np.zeros((N, C, W/P_W, H/P_H))
-            feature_map = block_reduce(input_map, tuple((1, 1, P_W, P_H)), func=np.mean)
+            feature_map = np.zeros((N, C, int(W/P_W), int(H/P_H)))
+            feature_map = block_reduce(input_map, tuple((1, 1, P_W, P_H)), func=np.mean)#降采样函数
             return feature_map
         else :
             # front->back (propagate loss)
@@ -206,7 +205,7 @@ if __name__ == '__main__':
             accuracy = float(np.array(correct_list).sum()) / batch_sz
             # calculate loss
             correct_prob = [ softmax_output[i][np.argmax(output_label[i])] for i in range(batch_sz) ]
-            correct_prob = filter(lambda x: x > 0, correct_prob)
+            correct_prob = list(filter(lambda x: x > 0, correct_prob))
             loss = -1.0 * np.sum(np.log(correct_prob))
             print ("The %d iters result:" % iters)
             print ("The accuracy is %f The loss is %f " % (accuracy, loss))
