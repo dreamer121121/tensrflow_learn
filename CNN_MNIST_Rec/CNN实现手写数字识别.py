@@ -19,7 +19,7 @@ batch_size = 100
 #计算一共有多少个批次
 n_batch = mnist.train.num_examples // batch_size
 
-#定义权值初始化函数
+#定义权值初始化函数,权值和偏置值都是变量类型。
 def weight_variable(shape):
     initial = tf.truncated_normal(shape,stddev=0.1)
     return tf.Variable(initial)
