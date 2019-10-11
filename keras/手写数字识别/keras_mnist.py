@@ -6,6 +6,7 @@ from keras.layers.convolutional import Conv2D,MaxPooling2D
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import matplotlib.pyplot as plt
+from keras.utils.vis_utils import plot_model
 
 
 
@@ -24,6 +25,7 @@ print(y_train_ohe.shape)
 
 x_train = x_train.reshape(x_train.shape[0],28,28,1).astype('float32')
 x_test = x_test.reshape(x_test.shape[0],28,28,1).astype("float32")
+
 
 # #像素值归一化
 # x_train /= 255
@@ -60,11 +62,16 @@ model.add(Dense(32,activation='relu'))
 model.add(Dense(10,activation='softmax'))
 #构建模型结束
 
+#模型可视化
+plot_model(model,to_file='./networkstructure.jpg',show_shapes=True)
+
+
+
 #设置训练参数
 model.compile(loss='categorical_crossentropy',optimizer='adagrad',metrics=['accuracy'])
 model.fit(x_train,y_train_ohe,validation_data=(x_test,y_test_ohe),epochs=20,batch_size=128)
 
-scores = model.evaluate(x_test,y_test_ohe,verbose=0)
+# scores = model.evaluate(x_test,y_test_ohe,verbose=0)
 
 
 
