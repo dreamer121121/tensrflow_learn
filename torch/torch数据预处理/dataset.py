@@ -3,10 +3,10 @@ from torch.utils import data
 import torch as t
 import cv2
 import numpy as np
-from torchvision import transforms as T
+from torchvision import transforms as T #专用的troch计算机视觉库
 from PIL import Image
 
-transforms = T.Compose([
+transforms = T.Compose([ #将所有的转换操作进行拼接
     T.Resize(224),
     T.CenterCrop(224),
     T.ToTensor(),#转换为tensor 并规范化到0-1之间。
