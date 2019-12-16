@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from torchvision import transforms as T #专用的troch计算机视觉库
 from PIL import Image
+from torch.utils.data import DataLoader
 
 transforms = T.Compose([ #将所有的转换操作进行拼接
     T.Resize(224),
@@ -38,7 +39,10 @@ class cat_dog(data.Dataset):
         return len(self.imgs)
 
 
-dataset = cat_dog(root='./train',transforms=transforms)
+dataset = cat_dog(root='./cat_dog',transforms=transforms)
+train_loader = DataLoader(dataset,batch_size=10) #迭代器 返回为4维矩阵[batch_size,c,h,w]
+print(len(dataset))
+
 # img,label = dataset[1]
 # cv2.imshow('img',np.array(img))
 # cv2.waitKey(0)
@@ -46,12 +50,18 @@ dataset = cat_dog(root='./train',transforms=transforms)
 # for img,label in dataset:
 #     print(img.size(),label)
 #     print(img)
-img,label = dataset[0]
-print(type(img))
-print(np.array(img))
-cv2.imshow('img',np.array(img))
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# img,label = dataset[0]
+# print(type(img))
+# print(np.array(img))
+# cv2.imshow('img',np.array(img))
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+for i,(img,target) in enumerate(train_loader):
+    print('index',i)                #i>batch_index
+    print(img.size())
+    # print(target)
+    # break
+
 
 
 
